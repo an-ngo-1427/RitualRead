@@ -1,8 +1,10 @@
 import os
 
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 
 
+db = SQLAlchemy()
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
@@ -10,6 +12,13 @@ def create_app(test_config=None):
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
     )
+
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dev.db'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    db.init_app(app)
+    with app.app_context():
+        db.create_all()
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
