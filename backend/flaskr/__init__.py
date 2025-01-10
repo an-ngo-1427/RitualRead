@@ -2,7 +2,7 @@ import os
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-
+from flask_migrate import Migrate
 
 db = SQLAlchemy()
 def create_app(test_config=None):
@@ -19,6 +19,8 @@ def create_app(test_config=None):
     db.init_app(app)
     with app.app_context():
         db.create_all()
+
+    migrate = Migrate(app,db)
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
