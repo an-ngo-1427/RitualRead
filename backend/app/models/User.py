@@ -1,6 +1,9 @@
 from .db import db,environment, SCHEMA
 from werkzeug.security import generate_password_hash,check_password_hash
-from flask_login import UserMixin
+from flask_login import UserMixin, LoginManager
+
+login_manager = LoginManager()
+
 class User(db.Model,UserMixin):
     __tablename__ = 'users'
     if environment == 'production':
@@ -23,6 +26,14 @@ class User(db.Model,UserMixin):
 
     def checkPassword(self,password):
         return check_password_hash(self.hashed_password,password)
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        user = User.query.get(user_id)
+        if not user:
+            return
+        else:
+            return user
 
     def to_dict(self):
         return{
