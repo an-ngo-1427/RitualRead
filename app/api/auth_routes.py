@@ -38,18 +38,19 @@ def signup():
 @login_required
 def logout():
     logout_user()
-    return redirect('/')
+    return {'message':'logout successful'}
 
 #logging in a user
 @auth_routes.route('/login',methods = ['POST'])
 def login():
     form = LoginForm()
+    form['csrf_token'].data = request.cookies['csrf_token']
     if form.validate_on_submit():
-        user = User.query.filter(User.email == form.data['email'])
+        user = User.query.filter(User.email == form.data['email']).first()
         login_user(user)
         return user.to_dict(), 201
 
-    return form.errors, 401
+    return {'errors':'Incorrect Credentials'}, 401
 
 @auth_routes.route('/delete',methods = ['DELETE'])
 def deleteAcc(user_id):
