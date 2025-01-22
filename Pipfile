@@ -19,6 +19,7 @@ flask-login = "*"
 flask-cors = "*"
 flask-migrate = "*"
 flask-wtf = "*"
+email-validator = "*"
 
 [dev-packages]
 

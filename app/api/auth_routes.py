@@ -24,13 +24,14 @@ def signup():
             last_name = form.data['last_name'],
             email = form.data['email'],
             username = form.data['username'],
-            password = form.data['password'],
+            password = form.data['password']
         )
 
         db.session.add(newUser)
         db.session.commit()
         login_user(newUser)
         return newUser.to_dict(), 301
+    return {'errors':{k:v[0] for k,v in form.errors.items()}}, 400
 
 # logging out user
 @auth_routes.route('/logout',methods = ['POST'])

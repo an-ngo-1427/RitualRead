@@ -17,11 +17,11 @@ class User(db.Model,UserMixin):
     username = db.Column(db.String(50),nullable = False)
 
     @property
-    def hPassword(self):
+    def password(self):
         return self.hashed_password
 
-    @hPassword.setter
-    def hPassword(self,password):
+    @password.setter
+    def password(self,password):
         self.hashed_password = generate_password_hash(password)
 
     def checkPassword(self,password):
