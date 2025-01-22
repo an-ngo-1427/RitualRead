@@ -2,14 +2,16 @@
 from flask import Blueprint,request,redirect
 from app.forms.user_forms import SignupForm,LoginForm
 from app.models import User,db
-from flask_login import current_user,login_user,logout_user,login_required,LoginManager
+from flask_login import current_user,login_user,logout_user,login_required
 auth_routes = Blueprint('auth',__name__)
-login_manager = LoginManager()
+
 #loading a user
+
 @auth_routes.route('/')
 def get_user():
-    print('---------getting user',current_user.is_authenticated)
-    return
+    if current_user.is_authenticated:
+        return current_user.to_dict()
+    return {'error':{'message':'Unauthorized'}}, 401
 
 # Signing up a user
 @auth_routes.route('/signup',methods=['POST'])
@@ -49,7 +51,6 @@ def login():
     return form.errors, 401
 
 @auth_routes.route('/delete',methods = ['DELETE'])
-@login_manager.user_loader
 def deleteAcc(user_id):
     user = User.get(user_id)
     if user:

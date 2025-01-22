@@ -1,8 +1,0 @@
-env
-/env
-.env
-instance/dev.db
-instance/
-/instance
-.instance
-.venv

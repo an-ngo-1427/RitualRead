@@ -5,7 +5,7 @@ from flask_cors import CORS
 from flask_wtf.csrf import generate_csrf
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from .models import db
+from .models import db,User
 import flask_login
 from .api.auth_routes import auth_routes
 app = Flask(__name__)
@@ -15,6 +15,11 @@ db.init_app(app)
 migrate = Migrate(app,db)
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
+
+@login_manager.user_loader
+def load_user(email):
+    return User.query.filter(User.email == email)
+
 # application securities
 CORS(app)
 # registering app with blueprints
