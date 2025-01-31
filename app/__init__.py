@@ -8,6 +8,7 @@ from flask_migrate import Migrate
 from .models import db,User
 import flask_login
 from .api.auth_routes import auth_routes
+from .api.feed_routes import feed_routes
 app = Flask(__name__)
 
 app.config.from_object(Config)
@@ -24,6 +25,7 @@ def load_user(user_id):
 CORS(app)
 # registering app with blueprints
 app.register_blueprint(auth_routes,url_prefix='/api/auth')
+app.register_blueprint(feed_routes,url_prefix = '/api/feed')
 # in production, forcing requests from http to https protocol by redirecting requests
 @app.before_request
 def redirect_request():
