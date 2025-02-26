@@ -37,9 +37,13 @@ login_manager.init_app(flask_app)
 sio = SocketIO(flask_app,async_mode = 'eventlet',cors_allowed_origins="*")
 
 @sio.on('connect')
-def connect(data):
-    print('connected -----',data)
+def connect(message):
+    print('connected -----',message)
     send('message received')
+
+@sio.on('message')
+def message(message):
+    print('message from client',message)
 
 @login_manager.user_loader
 def load_user(user_id):
