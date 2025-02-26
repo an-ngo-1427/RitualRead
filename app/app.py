@@ -1,12 +1,14 @@
 
+import os
 import selectors
-selectors.DefaultSelector = selectors.SelectSelector
+
+if (os.environ.get('FLASK-ENV') != 'production'):
+    selectors.DefaultSelector = selectors.SelectSelector
 
 import eventlet
 eventlet.monkey_patch()
 
 
-import os
 from config import Config
 from models import db,User
 from api.auth_routes import auth_routes
