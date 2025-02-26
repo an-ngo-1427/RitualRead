@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField
 from wtforms.validators import DataRequired,ValidationError,StopValidation
-from app.models import User
+from models import User
 
 user = None
 def verifyEmail(form,field):

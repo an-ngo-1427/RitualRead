@@ -1,9 +1,7 @@
-from flask import Blueprint
+from flask import Blueprint,render_template
 from .rssfeed import fetch_rss_feed
 feed_routes = Blueprint('feed',__name__)
 
 @feed_routes.route('/',methods=['GET'])
-def getFeeds():
-    articles = fetch_rss_feed('https://programmingdigest.net/newsletters.rss')
-
-    return articles
+def index():
+    return 'testing'
