@@ -10,3 +10,4 @@ instance/
 /instance
 .instance
 .venv
+__pycache__/
