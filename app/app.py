@@ -21,7 +21,7 @@ from flask_wtf.csrf import generate_csrf
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_socketio import SocketIO,send
-
+from flask_login import current_user
 
 flask_app = Flask(__name__,)
 
@@ -57,6 +57,10 @@ CORS(flask_app)
 # def index():
 #     return render_template('index.html')
 # registering app with blueprints
+@flask_app.route('/api')
+def homePage():
+    return render_template('homePage.html',current_user=current_user)
+
 flask_app.register_blueprint(auth_routes,url_prefix='/api/auth')
 flask_app.register_blueprint(feed_routes,url_prefix = '/api/feed')
 # in production, forcing requests from http to https protocol by redirecting requests
