@@ -1,12 +1,14 @@
 
+import os
 import selectors
-selectors.DefaultSelector = selectors.SelectSelector
+
+if (os.environ.get('FLASK-ENV') != 'production'):
+    selectors.DefaultSelector = selectors.SelectSelector
 
 import eventlet
 eventlet.monkey_patch()
 
 
-import os
 from config import Config
 from models import db,User
 from api.auth_routes import auth_routes
@@ -19,7 +21,7 @@ from flask_wtf.csrf import generate_csrf
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_socketio import SocketIO,send
-
+from flask_login import current_user
 
 flask_app = Flask(__name__,)
 
@@ -35,9 +37,13 @@ login_manager.init_app(flask_app)
 sio = SocketIO(flask_app,async_mode = 'eventlet',cors_allowed_origins="*")
 
 @sio.on('connect')
-def connect(data):
-    print('connected -----',data)
+def connect(message):
+    print('connected -----',message)
     send('message received')
+
+@sio.on('message')
+def message(message):
+    print('message from client',message)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -51,6 +57,10 @@ CORS(flask_app)
 # def index():
 #     return render_template('index.html')
 # registering app with blueprints
+@flask_app.route('/api')
+def homePage():
+    return render_template('homePage.html',current_user=current_user)
+
 flask_app.register_blueprint(auth_routes,url_prefix='/api/auth')
 flask_app.register_blueprint(feed_routes,url_prefix = '/api/feed')
 # in production, forcing requests from http to https protocol by redirecting requests
