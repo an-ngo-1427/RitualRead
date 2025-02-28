@@ -40,23 +40,25 @@ def signup():
     return render_template('signUp.html',form=form),400
 
 # logging out user
-@auth_routes.route('/logout',methods = ['POST'])
+@auth_routes.route('/logout',methods = ['GET'])
 @login_required
 def logout():
     logout_user()
-    return {'message':'logout successful'}
+    return redirect(url_for('homePage')),301
 
 #logging in a user
-@auth_routes.route('/login',methods = ['POST'])
+@auth_routes.route('/login',methods = ['GET','POST'])
 def login():
+    if request.method == 'GET':
+        return render_template('login.html')
     form = LoginForm()
     form['csrf_token'].data = request.cookies['csrf_token']
     if form.validate_on_submit():
         user = User.query.filter(User.email == form.data['email']).first()
         login_user(user)
-        return user.to_dict(), 201
+        return redirect(url_for('homePage')),301
 
-    return {'errors':'Incorrect Credentials'}, 401
+    return render_template('login.html',form=form)
 
 @auth_routes.route('/delete',methods = ['DELETE'])
 def deleteAcc(user_id):

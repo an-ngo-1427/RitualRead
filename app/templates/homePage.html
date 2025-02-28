@@ -11,19 +11,17 @@
     <body>
         <h1>Typing Monster</h1>
         {% if not current_user.is_authenticated %}
-            <button
-                action="/api/auth/"
-            >Log In</button>
+            <a href="/api/auth/login">
+                <button>Log In</button>
+            </a>
         {% else %}
             <button
 
             >Single Player</button>
             <button>Multiplayer</button>
-            <button
-
-            >
-
-            </button>
+            <a href="/api/auth/logout">
+                <button>Log out</button>
+            </a>
         {% endif %}
     </body>
 </html>

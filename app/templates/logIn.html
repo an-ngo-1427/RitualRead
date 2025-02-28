@@ -8,10 +8,18 @@
 </head>
 <body>
     <h1>Log In</h1>
-    <form action="/api/auth/" method="POST">
+    <form action="/api/auth/login" method="POST">
+        <ul>
+            {% for error in form.email.errors %}
+            <li>{{error}}</li>
+            {% endfor %}
+            {% for error in form.password.errors %}
+            <li>{{error}}</li>
+            {% endfor %}
+        </ul>
         <div>
             <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
+            <input type="email" id="email" name="email" value= "{{form.email.data or ''}}" required>
         </div>
         <div>
             <label for="password">Password:</label>
