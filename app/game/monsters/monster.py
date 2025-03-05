@@ -10,4 +10,8 @@ class Monster:
         self.points = difficulty *  100
         self.isHeal = isHeal
         self.isDoublePoints = isDoublePoints
+        self.status = 'alive'
         self.avatar = None
+
+    def terminateMonster(self):
+        self.status = 'terminated'

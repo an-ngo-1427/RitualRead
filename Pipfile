@@ -22,10 +22,11 @@ flask-wtf = "*"
 email-validator = "*"
 feedparser = "*"
 flask-socketio = "*"
-eventlet = "*"
+eventlet = "==0.30.2"
 python-socketio = "*"
+python-dotenv = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.9"
+python_version = "3.11"

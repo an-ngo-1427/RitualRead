@@ -1,7 +1,7 @@
 
 from flask import Blueprint,request,redirect,render_template,url_for
-from forms.user_forms import SignupForm,LoginForm
-from models import User,db
+from app.forms.user_forms import SignupForm,LoginForm
+from app.models import User,db
 from flask_login import current_user,login_user,logout_user,login_required
 auth_routes = Blueprint('auth',__name__)
 
@@ -49,9 +49,10 @@ def logout():
 #logging in a user
 @auth_routes.route('/login',methods = ['GET','POST'])
 def login():
-    if request.method == 'GET':
-        return render_template('login.html')
     form = LoginForm()
+    if request.method == 'GET':
+        print('entered login routes')
+        return render_template('login.html',form=form)
     form['csrf_token'].data = request.cookies['csrf_token']
     if form.validate_on_submit():
         user = User.query.filter(User.email == form.data['email']).first()

@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField,EmailField
 from wtforms.validators import DataRequired,ValidationError,Email
-from models import User
+from app.models import User
 def emailExists(form,field):
     email = field.data
     user = User.query.filter(User.email == email).first()

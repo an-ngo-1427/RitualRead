@@ -1,0 +1,15 @@
+{% extends 'index.html' %}
+{% block content %}
+<form method="post" action="">
+    <ul>
+        {% for err in errors %}
+        <li>{{err}}</li>
+        {% endfor %}
+    </ul>
+    <div>
+        <label>name</label>
+        <input placeholder="{{form.name.data if form else ''}}" name="name"/>
+    </div>
+    <button type="submit">Create</button>
+</form>
+{% endblock %}
