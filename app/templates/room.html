@@ -1,0 +1,17 @@
+{% extends 'index.html' %}
+{% block content %}
+<div>
+    <h3>room page</h3>
+</div>
+<button>Start game</button>
+<script type="text/javascript">
+    var socket = io()
+
+    socket.on('message',(message)=>{
+        console.log('message from server',message)
+    })
+    socket.on('connect',()=>{
+        console.log('socket id',socket.id)
+    })
+</script>
+{% endblock %}

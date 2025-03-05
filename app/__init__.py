@@ -1,70 +1,60 @@
 
 import os
 import selectors
-
+from .websocket import sio
 if (os.environ.get('FLASK-ENV') != 'production'):
     selectors.DefaultSelector = selectors.SelectSelector
 
-import eventlet
-eventlet.monkey_patch()
 
-
-from config import Config
-from models import db,User
-from api.auth_routes import auth_routes
-from api.feed_routes import feed_routes
-
+from .config import Config
+from .models import db,User
+from .api.auth_routes import auth_routes
+from .api.feed_routes import feed_routes
+from .api.room_routes import room_routes,rooms
 import flask_login
-from flask import Flask,request,redirect,render_template
+from flask import Flask,request,redirect,render_template,session
 from flask_cors import CORS
 from flask_wtf.csrf import generate_csrf
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_socketio import SocketIO,send
+from flask_socketio import SocketIO,send,join_room,leave_room
 from flask_login import current_user
 
-flask_app = Flask(__name__,)
+app = Flask(__name__,)
 
-flask_app.config.from_object(Config)
-db.init_app(flask_app)
-migrate = Migrate(flask_app,db)
+app.config.from_object(Config)
+db.init_app(app)
+migrate = Migrate(app,db)
 
-# Flask login
+# initiating socketio
+sio.init_app(app)
+
+# Flask logink
 login_manager = flask_login.LoginManager()
-login_manager.init_app(flask_app)
+login_manager.init_app(app)
 
-# Python socket
-sio = SocketIO(flask_app,async_mode = 'eventlet',cors_allowed_origins="*")
-
-@sio.on('connect')
-def connect(message):
-    print('connected -----',message)
-    send('message received')
-
-@sio.on('message')
-def message(message):
-    print('message from client',message)
-
+# application securities
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-# application securities
-CORS(flask_app)
+CORS(app)
 
 # @app.route('/api')
 # def index():
 #     return render_template('index.html')
 # registering app with blueprints
-@flask_app.route('/api')
+@app.route('/api')
 def homePage():
+    print('this is current user from main',current_user.username)
     return render_template('homePage.html',current_user=current_user)
 
-flask_app.register_blueprint(auth_routes,url_prefix='/api/auth')
-flask_app.register_blueprint(feed_routes,url_prefix = '/api/feed')
+app.register_blueprint(auth_routes,url_prefix='/api/auth')
+app.register_blueprint(feed_routes,url_prefix = '/api/feed')
+app.register_blueprint(room_routes,url_prefix='/api/rooms')
 # in production, forcing requests from http to https protocol by redirecting requests
-@flask_app.before_request
+@app.before_request
 def redirect_request():
     if os.environ.get('FLASK_ENV') == 'production':
         print('in production',request)
@@ -74,7 +64,7 @@ def redirect_request():
             return redirect(url,code = code)
 
 # injecting csurf token to cookies after every requests
-@flask_app.after_request
+@app.after_request
 def inject_csurf_tokens(response):
     response.set_cookie(
         'csrf_token',
@@ -99,6 +89,9 @@ def inject_csurf_tokens(response):
 #     return app.send_static_file('index.html')
 
 
-@flask_app.errorhandler(404)
+@app.errorhandler(404)
 def not_found(e):
-    return flask_app.send_static_file('index.html')
+    return app.send_static_file('index.html')
+
+if __name__ == '__main__':
+    sio.run(app)
