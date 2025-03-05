@@ -12,7 +12,7 @@ from .api.auth_routes import auth_routes
 from .api.feed_routes import feed_routes
 from .api.room_routes import room_routes,rooms
 import flask_login
-from flask import Flask,request,redirect,render_template,session
+from flask import Flask,request,redirect,render_template,session,send_from_directory
 from flask_cors import CORS
 from flask_wtf.csrf import generate_csrf
 from flask_sqlalchemy import SQLAlchemy
@@ -20,7 +20,7 @@ from flask_migrate import Migrate
 from flask_socketio import SocketIO,send,join_room,leave_room
 from flask_login import current_user
 
-app = Flask(__name__,)
+app = Flask(__name__,static_folder='../frontend/type-monster/dist',static_url_path='/')
 
 app.config.from_object(Config)
 db.init_app(app)
@@ -47,7 +47,6 @@ CORS(app)
 # registering app with blueprints
 @app.route('/api')
 def homePage():
-    print('this is current user from main',current_user.username)
     return render_template('homePage.html',current_user=current_user)
 
 app.register_blueprint(auth_routes,url_prefix='/api/auth')
@@ -76,17 +75,17 @@ def inject_csurf_tokens(response):
     )
     return response
 
-# @app.route('/', defaults={'path': ''})
-# @app.route('/<path:path>')
-# def react_root(path):
-#     """
-#     This route will direct to the public directory in our
-#     react builds in the production environment for favicon
-#     or index.html requests
-#     """
-#     if path == 'favicon.ico':
-#         return app.send_from_directory('public', 'favicon.ico')
-#     return app.send_static_file('index.html')
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def react_root(path):
+    """
+    This route will direct to the public directory in our
+    react builds in the production environment for favicon
+    or index.html requests
+    """
+    if path == 'favicon.ico':
+        return send_from_directory('public', 'honor_svgrepo-com.svg')
+    return app.send_static_file('index.html')
 
 
 @app.errorhandler(404)

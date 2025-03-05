@@ -2,8 +2,13 @@
 {% block content %}
 <div>
     <h3>room page</h3>
+    <ul>
+        {% for member in room['members'] %}
+        <li>{{member}}</li>
+        {% endfor %}
+    </ul>
+    <button>Start game</button>
 </div>
-<button>Start game</button>
 <script type="text/javascript">
     var socket = io()
 

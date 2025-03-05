@@ -1,5 +1,6 @@
-from flask import Blueprint,render_template,request,session
 from flask_socketio import join_room,leave_room
+from flask import Blueprint,render_template,request,session,redirect,url_for
+from flask_login import login_required,current_user
 import random
 room_routes = Blueprint('rooms',__name__)
 rooms={}
@@ -11,8 +12,16 @@ def gen_code_room():
         if roomCode not in rooms:
             return roomCode
 
-    rooms[roomCode] = {'name':'string','members':0,'messages':[]}
+@login_required
+@room_routes.route('/<int:roomId>',methods=['GET'])
+def roomDetail(roomId):
+    # need to check if the user is a member of the room
+    room = rooms[roomId]
+    if not room:
+        return redirect(url_for('not_found'))
+    return render_template('room.html',room=room)
 
+@login_required
 @room_routes.route('/',methods=['POST','GET'])
 def createRoom():
     errors = []
@@ -34,7 +43,7 @@ def createRoom():
         uniqueNames.add(name)
 
     roomCode = gen_code_room()
-    rooms[roomCode] = {'name':name,'members':0,'messages':[]}
+    rooms[roomCode] = {'name':name,'members':[],'messages':[]}
     session['room'] = roomCode
     session['room_name'] = name
-    return render_template('room.html',room=rooms[roomCode])
+    return redirect(url_for('rooms.roomDetail',roomId=roomCode))
