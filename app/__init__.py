@@ -11,6 +11,7 @@ from .models import db,User
 from .api.auth_routes import auth_routes
 from .api.feed_routes import feed_routes
 from .api.room_routes import room_routes,rooms
+from .api.lobby_routes import lobby_routes
 import flask_login
 from flask import Flask,request,redirect,render_template,session,send_from_directory
 from flask_cors import CORS
@@ -52,6 +53,7 @@ def homePage():
 app.register_blueprint(auth_routes,url_prefix='/api/auth')
 app.register_blueprint(feed_routes,url_prefix = '/api/feed')
 app.register_blueprint(room_routes,url_prefix='/api/rooms')
+app.register_blueprint(lobby_routes,url_prefix='/api/lobby')
 # in production, forcing requests from http to https protocol by redirecting requests
 @app.before_request
 def redirect_request():

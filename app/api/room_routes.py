@@ -15,7 +15,7 @@ def gen_code_room():
 @login_required
 @room_routes.route('/<int:roomId>',methods=['GET'])
 def roomDetail(roomId):
-    # need to check if the user is a member of the room
+    # need to check if the user is a member of the room!!!!!
     room = rooms[roomId]
     if not room:
         return redirect(url_for('not_found'))

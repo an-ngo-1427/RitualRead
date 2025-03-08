@@ -32,6 +32,7 @@ def signup():
             password = form.data['password']
         )
 
+
         db.session.add(newUser)
         db.session.commit()
         login_user(newUser)

@@ -1,15 +1,25 @@
 {% extends 'index.html' %}
 {% block content %}
-<form method="post" action="">
-    <ul>
-        {% for err in errors %}
-        <li>{{err}}</li>
-        {% endfor %}
-    </ul>
-    <div>
-        <label>name</label>
-        <input placeholder="{{form.name.data if form else ''}}" name="name"/>
-    </div>
-    <button type="submit">Create</button>
-</form>
+<div>
+    <dialog class="room_form">
+        <form method="post" action="">
+            <ul>
+                {% for err in errors %}
+                <li>{{err}}</li>
+                {% endfor %}
+            </ul>
+            <div>
+                <label>name</label>
+                <input placeholder="{{form.name.data if form else ''}}" name="name"/>
+            </div>
+            <button class="room_create" type="submit">Create</button>
+            <button class="room_cancel">Cancel</button>
+        </form>
+    </dialog>
+</div>
+<script type="text/javascript">
+    document.querySelector('.room_cancel').addEventListener('click',(e)=>{
+        document.querySelector('.room_form').close()
+    })
+</script>
 {% endblock %}

@@ -28,7 +28,18 @@ def connect(auth):
     rooms[room]['members'].append(userName)
     print('this is rooms-----',rooms)
     send(f"{userName} joined room",to=room)
+
 @sio.on('message')
 def message(message):
     print('message from client',message)
     send('this is message from server')
+
+@sio.on('disconnect')
+def disconnect():
+    if not current_user.is_authenticated:
+        return
+    room = session.get('room')
+    leave_room(room)
+    send(f"{current_user.username} left the room")
+    session.pop('room',None)
+    session.pop('room_name',None)

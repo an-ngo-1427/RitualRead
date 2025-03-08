@@ -1,0 +1,34 @@
+{% extends 'index.html' %}
+{% block content %}
+<div></div>
+<h1>Lobby</h1>
+<button class="room_form_btn">Create Room</button>
+<div>
+    <input placeholder="enter room name"/>
+    <button>Search</button>
+</div>
+<dialog class="room_form">
+    <form method="post" action="/api/rooms">
+        <ul>
+            {% for err in errors %}
+            <li>{{err}}</li>
+            {% endfor %}
+        </ul>
+        <div>
+            <label>name</label>
+            <input placeholder="{{form.name.data if form else ''}}" name="name"/>
+        </div>
+        <button class="room_create" type="submit">Create</button>
+    </form>
+    <button class="room_cancel">Cancel</button>
+</dialog>
+<script>
+    roomForm = document.querySelector('.room_form')
+    document.querySelector('.room_cancel').addEventListener('click',(e)=>{
+        roomForm.close()
+    })
+    document.querySelector('.room_form_btn').addEventListener('click',(e)=>{
+        roomForm.showModal()
+    })
+</script>
+{% endblock %}
