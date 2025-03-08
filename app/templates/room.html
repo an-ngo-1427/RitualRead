@@ -8,6 +8,16 @@
         {% endfor %}
     </ul>
     <button>Start game</button>
+    <button class="exitBtn">Exit room</button>
+    <dialog class="dialog_element">
+        <p>
+            Confirm to exit room
+        </p>
+        <button class="closeBtn">Close</button>
+        <a href="/api/lobby">
+            <button class="confirmBtn">Confirm</button>
+        </a>
+    </dialog>
 </div>
 <script type="text/javascript">
     var socket = io()
@@ -18,5 +28,15 @@
     socket.on('connect',()=>{
         console.log('socket id',socket.id)
     })
+    dialogBox = document.querySelector('.dialog_element')
+
+    document.querySelector('.exitBtn').addEventListener('click',(e)=>{
+        dialogBox.showModal()
+    })
+
+    document.querySelector('.closeBtn').addEventListener('click',(e)=>{
+        dialogBox.close()
+    })
+
 </script>
 {% endblock %}
