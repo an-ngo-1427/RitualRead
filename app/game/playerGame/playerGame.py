@@ -1,9 +1,11 @@
+from levels import Level
 class PlayerGame:
-    def __init__(self,player,level):
-        self.level = level
+    def __init__(self,player):
+        self.level = Level()
         self.player = player
         self.playerHealth = 5
         self.scores = 0
+        self.status = 'started'
 
     @property
     def scores(self):
@@ -19,3 +21,12 @@ class PlayerGame:
     @playerHealth.setter
     def playerHealth(self,value):
         self.playerHealth = self.playerHealth + value
+
+    def isEnded(self):
+        if self.playerHealth == 0:
+            self.status = 'ended'
+            return True
+        self.status = 'pending'
+        return False
+
+    # creating monsters for the game based on level
