@@ -2,17 +2,16 @@
 {% block content %}
 <div>
     <h3>room page</h3>
+    <h2>{{room['name']}}</h2>
     <ul>
         {% for member in room['members'] %}
         <li>{{member}}</li>
         {% endfor %}
     </ul>
-    <button>Start game</button>
+    <button class="startBtn">Start game</button>
     <button class="exitBtn">Exit room</button>
     <dialog class="dialog_element">
-        <p>document.querySelector('.room_cancel').addEventListener('click',(e)=>{
-            document.querySelector('.room_form').close()
-        })
+        <p>
             Confirm to exit room
         </p>
         <button class="closeBtn">Close</button>
@@ -24,11 +23,13 @@
 <script type="text/javascript">
     var socket = io()
 
+
     socket.on('message',(message)=>{
         console.log('message from server',message)
     })
     socket.on('connect',()=>{
         console.log('socket id',socket.id)
+        socket.send('message from client')
     })
     socket.on('disconnect',()=>{
         console.log('disconnected from server')
@@ -47,5 +48,12 @@
         socket.disconnect()
     })
 
+    // starting the game on the socket
+    document.querySelector('.startBtn').addEventListener('click',(e)=>{
+        socket.emit('start_game',{'players':room['members']})
+        console.log('starting the gane from client')
+    })
+
 </script>
+
 {% endblock %}

@@ -21,7 +21,7 @@ from flask_migrate import Migrate
 from flask_socketio import SocketIO,send,join_room,leave_room
 from flask_login import current_user
 
-app = Flask(__name__,static_folder='../frontend/type-monster/dist',static_url_path='/')
+app = Flask(__name__,static_folder='../react-vite/dist',static_url_path='/')
 
 app.config.from_object(Config)
 db.init_app(app)
@@ -48,7 +48,7 @@ CORS(app)
 # registering app with blueprints
 @app.route('/api')
 def homePage():
-    return render_template('homePage.html',current_user=current_user)
+    return render_template('index.html',current_user=current_user)
 
 app.register_blueprint(auth_routes,url_prefix='/api/auth')
 app.register_blueprint(feed_routes,url_prefix = '/api/feed')
@@ -85,8 +85,9 @@ def react_root(path):
     react builds in the production environment for favicon
     or index.html requests
     """
+    print('inside favicoon-------',path)
     if path == 'favicon.ico':
-        return send_from_directory('public', 'honor_svgrepo-com.svg')
+        return send_from_directory('public', 'favicon.ico')
     return app.send_static_file('index.html')
 
 
