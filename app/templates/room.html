@@ -10,7 +10,9 @@
     <button>Start game</button>
     <button class="exitBtn">Exit room</button>
     <dialog class="dialog_element">
-        <p>
+        <p>document.querySelector('.room_cancel').addEventListener('click',(e)=>{
+            document.querySelector('.room_form').close()
+        })
             Confirm to exit room
         </p>
         <button class="closeBtn">Close</button>
@@ -28,6 +30,9 @@
     socket.on('connect',()=>{
         console.log('socket id',socket.id)
     })
+    socket.on('disconnect',()=>{
+        console.log('disconnected from server')
+    })
     dialogBox = document.querySelector('.dialog_element')
 
     document.querySelector('.exitBtn').addEventListener('click',(e)=>{
@@ -36,6 +41,10 @@
 
     document.querySelector('.closeBtn').addEventListener('click',(e)=>{
         dialogBox.close()
+    })
+
+    document.querySelector('.confirmBtn').addEventListener('click',(e)=>{
+        socket.disconnect()
     })
 
 </script>
