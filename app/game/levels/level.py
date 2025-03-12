@@ -9,6 +9,7 @@ class Level:
         self.monsters = []
         self.passed = False
 
+    # addvancing level by adding a monter to monsters array based on the difficulty level
     def advanceLevel(self):
         if(len(self.monsters) >= 4):
             self.levelDifficulty += 1
