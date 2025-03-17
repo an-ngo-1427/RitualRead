@@ -2,13 +2,20 @@
 {% block content %}
 <div></div>
 <h1>Lobby</h1>
-<button class="room_form_btn">Create Room</button>
+<button class="room_form_open" >Create Room</button>
 <div>
     <input placeholder="enter room name"/>
     <button>Search</button>
 </div>
-<dialog class="room_form">
-    <form method="post" action="/api/rooms">
+<ul>
+    {% for roomCode,roomDetails in rooms.items() %}
+    <li style="cursor: pointer;" class="room_item" id="{{roomCode}}">{{roomDetails['name']}} </li>
+    {% endfor %}
+</ul>
+
+<dialog class="room_dialog" id="create_room_dialog">
+    <h2>create room</h2>
+    <form method="post" action="/api/rooms" id="create_room_form">
         <ul>
             {% for err in errors %}
             <li>{{err}}</li>
@@ -19,16 +26,52 @@
             <input placeholder="{{form.name.data if form else ''}}" name="name"/>
         </div>
         <button class="room_create" type="submit">Create</button>
+        <button type="button" class="close_dialog">Close</button>
     </form>
-    <button class="room_cancel">Cancel</button>
+</dialog>
+<dialog class="room_dialog" id="join_room_dialog">
+    <form method="POST" id="join_room_form">
+        <button type='submit' onclick="handleJoinRoom(event)">Enter room</button>
+        <button type="button" class="close_dialog">Close</button>
+    </form>
 </dialog>
 <script>
-    roomForm = document.querySelector('.room_form')
-    document.querySelector('.room_cancel').addEventListener('click',(e)=>{
-        roomForm.close()
-    })
-    document.querySelector('.room_form_btn').addEventListener('click',(e)=>{
+
+    document.querySelector('.room_form_open').addEventListener('click',(e)=>{
+        e.preventDefault()
+        const roomForm = document.querySelector('#create_room_dialog')
         roomForm.showModal()
     })
+
+    document.querySelectorAll('.close_dialog').forEach((element)=>
+    {
+        element.addEventListener('click',(e)=>{
+            e.preventDefault()
+            const dialog = e.target.closest('dialog')
+            console.log('closing dialog',dialog)
+            dialog.close()
+        })
+    }
+    )
+
+    document.querySelectorAll('.room_item').forEach((element)=>
+    {
+        addEventListener('click',(e)=>{
+        e.preventDefault()
+        const dialog = document.querySelector('#join_room_dialog')
+        dialog.dataset.roomId = e.target.id
+        dialog.showModal()
+        })
+    }
+    )
+
+    async function handleJoinRoom(e){
+        const dialog  = e.target.closest('dialog')
+        const form = e.target.form
+        const roomId = dialog.dataset.roomId
+        form.action =`/api/rooms/${roomId}`
+        form.submit()
+        dialog.close()
+    }
 </script>
 {% endblock %}

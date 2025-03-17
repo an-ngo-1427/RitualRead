@@ -3,7 +3,7 @@
 <div>
     <h3>room page</h3>
     <h2>{{room['name']}}</h2>
-    <ul>
+    <ul class="member_list">
         {% for member in room['members'] %}
         <li>{{member}}</li>
         {% endfor %}
@@ -15,42 +15,42 @@
             Confirm to exit room
         </p>
         <button class="closeBtn">Close</button>
-        <a href="/api/lobby">
-            <button class="confirmBtn">Confirm</button>
-        </a>
+        <button data-room-id="{{ room['roomId'] }}" class="confirmBtn">Confirm</button>
     </dialog>
 </div>
 <script type="text/javascript">
     var socket = io()
 
 
-    socket.on('message',(message)=>{
-        console.log('message from server',message)
+    socket.on('message', (message) => {
+        console.log('message from server', message)
     })
-    socket.on('connect',()=>{
-        console.log('socket id',socket.id)
+    socket.on('connect', () => {
+        console.log('socket id', socket.id)
         socket.send('message from client')
     })
-    socket.on('disconnect',()=>{
+    socket.on('disconnect', () => {
         console.log('disconnected from server')
     })
     dialogBox = document.querySelector('.dialog_element')
 
-    document.querySelector('.exitBtn').addEventListener('click',(e)=>{
+    document.querySelector('.exitBtn').addEventListener('click', (e) => {
         dialogBox.showModal()
     })
 
-    document.querySelector('.closeBtn').addEventListener('click',(e)=>{
+    document.querySelector('.closeBtn').addEventListener('click', (e) => {
         dialogBox.close()
     })
 
-    document.querySelector('.confirmBtn').addEventListener('click',(e)=>{
+    document.querySelector('.confirmBtn').addEventListener('click', (e) => {
         socket.disconnect()
+        const roomId = e.target.dataset.roomId
+        window.location.href='/api/lobby'
     })
 
     // starting the game on the socket
-    document.querySelector('.startBtn').addEventListener('click',(e)=>{
-        socket.emit('start_game',{'players':room['members']})
+    document.querySelector('.startBtn').addEventListener('click', (e) => {
+        socket.emit('start_game', { 'players': room['members'] })
         console.log('starting the gane from client')
     })
 

@@ -12,14 +12,45 @@ def gen_code_room():
         if roomCode not in rooms:
             return roomCode
 
+# getting room details and joining a room
 @login_required
-@room_routes.route('/<int:roomId>',methods=['GET'])
+@room_routes.route('/<int:roomId>',methods=['GET','POST'])
 def roomDetail(roomId):
     # need to check if the user is a member of the room!!!!!
     room = rooms[roomId]
+    print('this is member----:',current_user.username)
+    print('this is room-----',roomId,room)
     if not room:
+        print('there is no room------')
         return redirect(url_for('not_found'))
-    return render_template('room.html',room=room)
+
+    if request.method == 'GET':
+        return render_template('room.html',room=room)
+    else:
+        username = current_user.username
+        # if username not in room['members']:
+        #     room['members'].append(username)
+        session['room'] = roomId
+        session['room_name'] = room['name']
+        return render_template('room.html',room=room)
+
+# @login_required
+# @room_routes.route('/<int:roomId>',methods=['DELETE'])
+# def leaveRoom(roomId):
+#     userName = current_user.username
+#     print('entered leaving room----',userName)
+#     room = rooms.get(roomId)
+#     if not room:
+#         return
+#     for member in room['members']:
+#         if userName == member:
+#             print(member)
+#             member = None
+#             break
+
+#     session.pop('room',None)
+#     session.pop('room_name',None)
+#     return redirect(url_for('lobby.getLobby'))
 
 @login_required
 @room_routes.route('/',methods=['POST','GET'])
@@ -43,7 +74,7 @@ def createRoom():
         uniqueNames.add(name)
 
     roomCode = gen_code_room()
-    rooms[roomCode] = {'name':name,'members':[],'messages':[]}
+    rooms[roomCode] = {'roomId':roomCode, 'name':name,'members':[],'messages':[]}
     session['room'] = roomCode
     session['room_name'] = name
     return redirect(url_for('rooms.roomDetail',roomId=roomCode))
