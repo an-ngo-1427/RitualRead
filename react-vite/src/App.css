@@ -40,3 +40,21 @@
 .read-the-docs {
   color: #888;
 }
+
+/* CSS Resets for Auth Pages */
+.login-container {
+  place-items: initial !important;
+  display: flex !important;
+}
+
+body {
+  place-items: initial !important;
+}
+
+.login-card label {
+  display: block !important;
+  color: #333 !important;
+  font-size: 16px !important;
+  margin-bottom: 8px !important;
+  text-align: left !important;
+}

@@ -12,7 +12,7 @@ def get_user():
     if current_user.is_authenticated:
         # return current_user.to_dict()
         print('this is current user',current_user)
-        return render_template('testing.html',current_user=current_user)
+        return {'user':current_user.username}
     return {'error':{'message':'Unauthorized'}}, 401
 
 # Signing up a user
@@ -31,14 +31,12 @@ def signup():
             username = form.data['username'],
             password = form.data['password']
         )
-
-
         db.session.add(newUser)
         db.session.commit()
         login_user(newUser)
-        return redirect(url_for('homePage')),201
-    # return {'errors':{k:v[0] for k,v in form.errors.items()}}, 400
-    return render_template('signUp.html',form=form),400
+        return {'user':newUser.to_dict()},201
+    return {'errors': [error for error in form.errors.values()]}, 400
+
 
 # logging out user
 @auth_routes.route('/logout',methods = ['GET'])
@@ -51,16 +49,14 @@ def logout():
 @auth_routes.route('/login',methods = ['GET','POST'])
 def login():
     form = LoginForm()
-    if request.method == 'GET':
-        print('entered login routes')
-        return render_template('login.html',form=form)
     form['csrf_token'].data = request.cookies['csrf_token']
     if form.validate_on_submit():
         user = User.query.filter(User.email == form.data['email']).first()
         login_user(user)
-        return redirect(url_for('homePage')),301
+        return {'user':user.to_dict()},200
 
-    return render_template('login.html',form=form)
+
+    return {'errors':[error[0] for error in form.errors.values()]},400
 
 @auth_routes.route('/delete',methods = ['DELETE'])
 def deleteAcc(user_id):
