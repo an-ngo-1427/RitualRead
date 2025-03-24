@@ -34,47 +34,37 @@ def roomDetail(roomId):
         session['room_name'] = room['name']
         return render_template('room.html',room=room)
 
-# @login_required
-# @room_routes.route('/<int:roomId>',methods=['DELETE'])
-# def leaveRoom(roomId):
-#     userName = current_user.username
-#     print('entered leaving room----',userName)
-#     room = rooms.get(roomId)
-#     if not room:
-#         return
-#     for member in room['members']:
-#         if userName == member:
-#             print(member)
-#             member = None
-#             break
+@login_required
+@room_routes.route('/<int:roomId>',methods=['DELETE'])
+def leaveRoom(roomId):
+    userName = current_user.username
+    print('entered leaving room----',userName)
+    room = rooms.get(roomId)
+    if not room:
+        return
 
-#     session.pop('room',None)
-#     session.pop('room_name',None)
-#     return redirect(url_for('lobby.getLobby'))
+    session.pop('room',None)
+    session.pop('room_name',None)
+    return redirect(url_for('lobby.getLobby'))
 
 @login_required
 @room_routes.route('/',methods=['POST','GET'])
 def createRoom():
-    errors = []
-    if request.method == 'GET':
-        return render_template('roomForm.html')
-
     form = request.form
     name = request.form.get("name")
-    # checking if name is entered
+    print(name)
     if not name:
-        errors.append('enter room name')
-        return render_template('roomForm.html',errors=errors)
-
-    # checking if given name is unique
+        return {'errors':['please provide room name']}, 400
     if name in uniqueNames:
-        errors.append('name already exists')
-        return render_template('roomForm.html',form=form,errors=errors)
+        return {'errors':['room name already exists']}, 400
     else:
         uniqueNames.add(name)
 
     roomCode = gen_code_room()
-    rooms[roomCode] = {'roomId':roomCode, 'name':name,'members':[],'messages':[]}
+    # Initialize members as a set
+    rooms[roomCode] = {'roomId': roomCode, 'name': name, 'members': set(), 'messages': []}
     session['room'] = roomCode
     session['room_name'] = name
-    return redirect(url_for('rooms.roomDetail',roomId=roomCode))
+    newRoom = rooms[roomCode]
+    return {'room':newRoom}, 201
+# create a function to delete a room
