@@ -6,8 +6,11 @@ import os
 
 origins = os.environ.get('PRO_ORIGIN') if os.environ.get('FLASK_ENV')=='production' else os.environ.get('DEV_ORIGIN')
 
-sio = SocketIO(cors_allowed_origins = origins,debug=True)
+sio = SocketIO(cors_allowed_origins = origins,debug=True,logger=True, engineio_logger=True)
 
+@sio.on('connect_error')
+def connect_error(err):
+    print('error connecting',err)
 @sio.on('connect')
 def connect(auth):
     roomCode = session.get('room')
@@ -30,8 +33,8 @@ def connect(auth):
     print('this is username---',userName)
     join_room(roomCode)
     room['members'].add(userName)
-    send(f"{userName} joined room",to=room)
-    return redirect(url_for('rooms.roomDetail',room=room))
+    send(f"{userName} joined room")
+
 @sio.on('message')
 def message(message):
     print('message from client',message)

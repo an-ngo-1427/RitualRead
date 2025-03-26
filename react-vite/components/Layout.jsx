@@ -4,21 +4,23 @@ import './Layout.css';
 
 function Layout() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+  const [user, setUser] = useState(null);
   useEffect(() => {
     // Check if user is logged in
     // This is a placeholder - implement actual auth check
     const checkAuth = async () => {
         const response = await fetch('/api/auth/');
+        const data = await response.json();
         if (response.ok) {
           setIsLoggedIn(true);
+          setUser(data.user)
         }else{
           setIsLoggedIn(false)
         }
       }
 
     checkAuth();
-  }, []);
+  }, [user]);
 
   return (
     <div className="app-container">

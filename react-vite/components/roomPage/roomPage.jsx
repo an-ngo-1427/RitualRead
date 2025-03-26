@@ -1,28 +1,31 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { io } from 'socket.io-client'
-
+let socket
 function RoomPage() {
     const [connected, setConnected] = useState(false);
     const [roomData, setRoomData] = useState(null);
     const { roomId } = useParams();
 
     useEffect(() => {
-        const socket = io();
-
+        console.log('socket:');
+        socket = io();
         socket.on('connect', () => {
+            console.log('conntecting to server...');
             setConnected(true);
             socket.emit('join_room', { room_id: roomId });
         });
-
-        socket.on('room_data', (data) => {
-            setRoomData(data);
+        socket.on("connect_error", (err) => {
+            console.log(`connect_error due to ${err.message}`);
+          });
+        socket.on('message', (data) => {
+            console.log('message:', data);
         });
 
         return () => {
             socket.disconnect();
         };
-    }, [roomId]);
+    }, []);
 
     return (
         <div className="room-container">
