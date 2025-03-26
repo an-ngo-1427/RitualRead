@@ -21,23 +21,23 @@ function LobbyPage() {
 
     const response = await fetch('/api/rooms');
     const data = await response.json();
-    setRooms(data);
+    setRooms(data.rooms);
   };
 
   const handleCreateRoom = async (e) => {
     e.preventDefault();
+    const formData = new FormData()
+    formData.append('name', roomName)
     const response = await fetch('/api/rooms', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ name: roomName }),
+      body: formData,
     });
 
     const data = await response.json();
     if (response.ok) {
       const newRoom = data.room
       setShowCreateDialog(false);
+      console.log('New room:', newRoom);
       navigate(`/rooms/${newRoom.roomId}`)
     } else {
       setErrors(errorData.errors || ['An error occurred']);

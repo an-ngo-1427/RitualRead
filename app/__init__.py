@@ -56,6 +56,11 @@ app.register_blueprint(room_routes,url_prefix='/api/rooms')
 app.register_blueprint(lobby_routes,url_prefix='/api/lobby')
 # in production, forcing requests from http to https protocol by redirecting requests
 @app.before_request
+def before_request():
+    print('current user----',current_user)
+    print('user is authenticated----',current_user.is_authenticated)
+
+@app.before_request
 def redirect_request():
     if os.environ.get('FLASK_ENV') == 'production':
         print('in production',request)

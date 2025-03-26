@@ -15,7 +15,8 @@ class User(db.Model,UserMixin):
     email = db.Column(db.String(150),nullable = False)
     hashed_password = db.Column(db.String(200),nullable = False)
     username = db.Column(db.String(50),nullable = False)
-
+    room_id = db.Column(db.Integer,db.ForeignKey('rooms.id'),nullable = True)
+    room = db.relationship('Room',back_populates='members')
     @property
     def password(self):
         return self.hashed_password

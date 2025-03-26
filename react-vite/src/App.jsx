@@ -12,9 +12,8 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Navigate to="/lobby" />} />
           <Route path="lobby" element={<LobbyPage />} />
-          <Route path="room/:roomId" element={<RoomPage />} />
+          <Route path="rooms/:roomId" element={<RoomPage />} />
           <Route path="login" element={<LoginPage />} />
-          <Route path="*" element={<Navigate to="/lobby" />} />
         </Route>
       </Routes>
     </Router>

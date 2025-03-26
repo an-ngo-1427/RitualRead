@@ -11,7 +11,6 @@ auth_routes = Blueprint('auth',__name__)
 def get_user():
     if current_user.is_authenticated:
         # return current_user.to_dict()
-        print('this is current user',current_user)
         return {'user':current_user.username}
     return {'error':{'message':'Unauthorized'}}, 401
 
@@ -52,6 +51,8 @@ def login():
     form['csrf_token'].data = request.cookies['csrf_token']
     if form.validate_on_submit():
         user = User.query.filter(User.email == form.data['email']).first()
+        if not user:
+            return {'errors':['Invalid email']},400
         login_user(user)
         return {'user':user.to_dict()},200
 
