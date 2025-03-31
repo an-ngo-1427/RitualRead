@@ -38,7 +38,7 @@ function LobbyPage() {
       const newRoom = data.room
       setShowCreateDialog(false);
       console.log('New room:', newRoom);
-      navigate(`/rooms/${newRoom.roomId}`)
+      navigate(`/rooms/${newRoom.id}`)
     } else {
       setErrors(errorData.errors || ['An error occurred']);
     }
