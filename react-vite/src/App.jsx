@@ -4,6 +4,7 @@ import LobbyPage from '../components/lobbyPage/LobbyPage'
 import RoomPage from '../components/roomPage/roomPage'
 import LoginPage from '../components/auth/LoginPage'
 import './App.css'
+import SignUpPage from '../components/auth/SignUpPage'
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="lobby" element={<LobbyPage />} />
           <Route path="rooms/:roomId" element={<RoomPage />} />
           <Route path="login" element={<LoginPage />} />
+          <Route path="signup" element={<SignUpPage />} />
         </Route>
       </Routes>
     </Router>
