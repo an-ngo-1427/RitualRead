@@ -1,4 +1,4 @@
-from flask_socketio import SocketIO,leave_room,join_room,send
+from flask_socketio import SocketIO,leave_room,join_room,send,emit
 from flask import session,request,redirect,url_for
 from flask_login import current_user
 from app.models import Room,User
@@ -28,6 +28,8 @@ def connect(auth):
     join_room(roomId)
 
     send(f"{user.username} joined room")
+    emit("join_room",{'room':room.to_dict()},to=roomId)
+    emit('room','data')
 
 @sio.on('message')
 def message(message):
@@ -50,12 +52,12 @@ def disconnect(*arg):
     room = Room.query.get(roomId)
     roomMembers = room.members
     leave_room(roomId)
-    send(f"{current_user.username} left the room",to=roomId)
 
     if not roomMembers:
         db.session.delete(room)
 
     db.session.commit()
+    emit('leave_room',{'room':room.to_dict()},to=roomId)
     session.pop('room',None)
     session.pop('room_name',None)
 
