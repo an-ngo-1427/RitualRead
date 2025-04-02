@@ -15,13 +15,20 @@ function RoomPage() {
     // useEffect to connect socket
     useEffect(() => {
         socket = io()
-        socket.on('connect', () => {
-            console.log('conntecting to server...');
+        socket.on('connect', (message) => {
+            console.log('conntecting to server...:', message);
         });
         socket.on("connect_error", (err) => {
             console.log(`connect_error due to ${err.message}`);
         });
         socket.emit('joinRoom', roomId)
+        socket.on('join_room', (data) => {
+            setRoomData(data.room);
+        });
+        socket.on('leave_room', (data) => {
+            setRoomData(data.room);
+        });
+
         return () => {
             socket.disconnect();
         }
@@ -101,7 +108,9 @@ function RoomPage() {
             {roomData ? (
                 <div>
                     <h2>{roomData.name}</h2>
-                    {/* Additional room content will go here */}
+                    <div>
+                        {roomData.members.map((member) => <div key={member.id}>{member.username}</div>)}
+                    </div>
                 </div>
             ) : (
                 <p>Loading room data...</p>

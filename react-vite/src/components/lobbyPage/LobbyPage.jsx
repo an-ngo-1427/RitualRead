@@ -52,11 +52,11 @@ function LobbyPage() {
       const response = await fetch(`/api/rooms/${selectedRoomId}`, {
         method: 'POST',
       });
-
+      const data = await response.json();
       if (response.ok) {
         setShowJoinDialog(false);
         // Navigate to room page
-        navigate(`/room/${selectedRoomId}`);
+        navigate(`/rooms/${data.room.id}`);
       } else {
         console.error('Failed to join room');
       }
@@ -71,9 +71,9 @@ function LobbyPage() {
   };
 
   const filteredRooms = searchTerm
-    ? Object.entries(rooms).filter(([_, roomDetails]) =>
+    ? rooms.filter((roomDetails) =>
       roomDetails.name.toLowerCase().includes(searchTerm.toLowerCase()))
-    : Object.entries(rooms);
+    : rooms;
 
   return (
     <div className="lobby-container">
@@ -99,11 +99,12 @@ function LobbyPage() {
 
       <ul className="room-list">
         {filteredRooms.length > 0 ? (
-          filteredRooms.map(([roomCode, roomDetails]) => (
+          filteredRooms.map((roomDetails) => (
             <li
-              key={roomCode}
+              key={roomDetails.id}
               className="room-item"
-              onClick={() => openJoinRoomDialog(roomCode)}
+              onClick={() => openJoinRoomDialog(roomDetails.id)}
+              id={roomDetails.id}
             >
               {roomDetails.name}
             </li>
