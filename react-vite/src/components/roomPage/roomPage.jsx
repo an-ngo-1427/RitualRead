@@ -2,37 +2,66 @@ import { useEffect, useState } from "react"
 import { useNavigate, useParams,useBlocker} from "react-router-dom"
 
 import { io } from 'socket.io-client'
+
 let socket
 function RoomPage() {
-    const [connected, setConnected] = useState(false);
     const [roomData, setRoomData] = useState(null);
     const { roomId } = useParams();
     const navigate = useNavigate();
     const [showExitDialog, setShowExitDialog] = useState(false);
+
     // useEffect to connect to the socket server
-    useBlocker((currentLocation, nextLocation) => {
-        return currentLocation.pathname !== nextLocation.pathname
-    })
+
+    // useEffect to connect socket
     useEffect(() => {
-        console.log('socket:');
-        socket = io();
+        socket = io()
         socket.on('connect', () => {
             console.log('conntecting to server...');
-            setConnected(true);
-            socket.emit('join_room', { room_id: roomId });
         });
         socket.on("connect_error", (err) => {
             console.log(`connect_error due to ${err.message}`);
         });
-        socket.on('message', (data) => {
-            console.log('message:', data);
-        });
-
+        socket.emit('joinRoom', roomId)
         return () => {
             socket.disconnect();
-        };
-    }, [roomId]);
+        }
+    },[])
 
+    // Adding a warning when user navigate out of the room page
+    useEffect(() => {
+        history.pushState(null,"",window.location.href)
+        const handlePopState = (event) => {
+            event.preventDefault();
+            setShowExitDialog(true);
+        }
+
+        window.addEventListener('popstate', handlePopState);
+        return () => {
+            window.removeEventListener('popstate', handlePopState);
+        }
+    },[])
+
+    // Adding a warning when user refresh the page
+    useEffect(() => {
+        const handleNavigations = (event) => {
+            const navigationEntry = performance.getEntriesByType('navigation')[0];
+            console.log('navigationEntry:', navigationEntry);
+            switch (navigationEntry.type) {
+                case 'reload':
+                    console.log('Page was reloaded');
+                    event.preventDefault();
+                    setShowExitDialog(true);
+                    break;
+                default:
+                    break;
+            }
+        }
+        window.addEventListener('beforeunload', handleNavigations);
+        return () => {
+            window.removeEventListener('beforeunload', handleNavigations);
+        }
+    }
+    ,[])
     // useEffect to fetch room data
     useEffect(() => {
         const fetchRoomData = async () => {
@@ -68,18 +97,7 @@ function RoomPage() {
     }
     return (
         <div className="room-container">
-            {/* <Prompt
-                message={(location,action) => {
-                    if (action == 'POP') {
-                        return "Are you sure you want to exit room?";
-                    }
-                }}
-            >
-
-            </Prompt> */}
             <h1>Room Page</h1>
-            {!connected && <p>Connecting to server...</p>}
-
             {roomData ? (
                 <div>
                     <h2>{roomData.name}</h2>
@@ -98,7 +116,11 @@ function RoomPage() {
                 <div className="exit-dialog">
                     <p>Are you sure you want to exit the room?</p>
                     <button onClick={handleExitRoom}>Yes</button>
-                    <button onClick={() => setShowExitDialog(false)}>No</button>
+                    <button onClick={() => {
+                        setShowExitDialog(false)
+                        history.pushState(null, "", window.location.href);
+                    }}
+                    >No</button>
                 </div>
             )}
         </div>

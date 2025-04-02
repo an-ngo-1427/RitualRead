@@ -1,7 +1,8 @@
 from flask_socketio import SocketIO,leave_room,join_room,send
 from flask import session,request,redirect,url_for
 from flask_login import current_user
-from .api.room_routes import rooms
+from app.models import Room,User
+from app.models import db
 import os
 
 origins = os.environ.get('PRO_ORIGIN') if os.environ.get('FLASK_ENV')=='production' else os.environ.get('DEV_ORIGIN')
@@ -13,27 +14,20 @@ def connect_error(err):
     print('error connecting',err)
 @sio.on('connect')
 def connect(auth):
-    roomCode = session.get('room')
+    roomId = session.get('room')
     roomName = session.get('room_name')
-    print('this is room code',roomCode)
-    print('this  is room----',rooms[roomCode])
-    print('this is rooms-----',rooms)
+    room = Room.query.filter_by(id = roomId, name = roomName).first()
+    user = User.query.get(current_user.id)
 
-    if not current_user.is_authenticated:
-        return redirect(url_for('homePage'))
-    if not roomCode or not roomName:
-        return
-    if roomCode not in rooms:
-        print('left room')
-        leave_room(roomCode)
+    if not room:
+        session.pop('room',None)
+        session.pop('room_name',None)
+        leave_room(roomId)
+    user.room_id = roomId
+    db.session.commit()
+    join_room(roomId)
 
-    # userName = session.get('username')
-    room = rooms.get(roomCode)
-    userName = current_user.username
-    print('this is username---',userName)
-    join_room(roomCode)
-    room['members'].add(userName)
-    send(f"{userName} joined room")
+    send(f"{user.username} joined room")
 
 @sio.on('message')
 def message(message):
@@ -42,20 +36,26 @@ def message(message):
 
 @sio.on('disconnect')
 def disconnect(*arg):
-    print('disconnecting from server',current_user.username)
+    print('disconnecting from server----------',current_user.username)
     if not current_user.is_authenticated:
         return
 
-    userName = current_user.username
     roomId = session.get('room')
-    room = rooms.get(roomId)
 
-    if not room:
+    if not roomId:
         return
-    room['members'].discard(userName)
-    print('this is disconnection-----',rooms)
+    # delete user from room
+    current_user.room_id = None
+    # if members of room is empty, delete room
+    room = Room.query.get(roomId)
+    roomMembers = room.members
     leave_room(roomId)
     send(f"{current_user.username} left the room",to=roomId)
+
+    if not roomMembers:
+        db.session.delete(room)
+
+    db.session.commit()
     session.pop('room',None)
     session.pop('room_name',None)
 

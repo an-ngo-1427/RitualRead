@@ -1,10 +1,10 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import Layout from '../components/Layout'
-import LobbyPage from '../components/lobbyPage/LobbyPage'
-import RoomPage from '../components/roomPage/roomPage'
-import LoginPage from '../components/auth/LoginPage'
+import LobbyPage from './components/lobbyPage/LobbyPage'
+import RoomPage from './components/roomPage/roomPage'
+import LoginPage from './components/auth/LoginPage'
 import './App.css'
-import SignUpPage from '../components/auth/SignUpPage'
+import SignUpPage from './components/auth/SignUpPage'
+import Layout from './Layout'
 
 function App() {
   return (
