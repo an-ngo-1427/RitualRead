@@ -28,23 +28,6 @@ class User(db.Model,UserMixin):
     def checkPassword(self,password):
         return check_password_hash(self.hashed_password,password)
 
-    # @login_manager.user_loader
-    # def load_user(email):
-    #     user = User.query.filter(User.email == email).first()
-    #     if not user:
-    #         return
-    #     else:
-    #         return user
-
-    # @login_manager.request_loader
-    # def request_loader(request):
-    #     email = request.form.get('email')
-    #     user = User.query.filter(User.email == email).first()
-    #     if not user:
-    #         return
-    #     else:
-    #         return user
-
     def to_dict(self):
         return{
             'id':self.id,

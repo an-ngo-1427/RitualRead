@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './LobbyPage.css';
+import useSocket from '../../contexts/socketContext';
 
 function LobbyPage() {
   const [rooms, setRooms] = useState([]);
@@ -10,7 +11,6 @@ function LobbyPage() {
   const [roomName, setRoomName] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [errors, setErrors] = useState([]);
-
   const navigate = useNavigate();
 
   useEffect(() => {

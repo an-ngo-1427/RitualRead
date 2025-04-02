@@ -15,13 +15,11 @@ def get_user():
     return {'error':{'message':'Unauthorized'}}, 401
 
 # Signing up a user
-@auth_routes.route('/signup',methods=['GET','POST'])
+@auth_routes.route('/signup',methods=['POST'])
 def signup():
     form = SignupForm()
-    if (request.method == 'GET'):
-        return render_template('signUp.html',form=form),200
-
     form['csrf_token'].data = request.cookies['csrf_token']
+    print(form.data)
     if form.validate_on_submit():
         newUser = User(
             first_name = form.data['first_name'],
