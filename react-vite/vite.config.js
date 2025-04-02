@@ -13,6 +13,10 @@ export default defineConfig({
       "/socket.io":{
         target:"ws://127.0.0.1:5000",
       },
+      // '/socket.io': {
+      //   target: 'http://localhost:5000',
+      //   ws: true
+      // }
     },
   },
 })
