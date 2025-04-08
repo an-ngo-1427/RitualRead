@@ -2,6 +2,8 @@ from flask_socketio import SocketIO,leave_room,join_room,send,emit
 from flask import session,request,redirect,url_for
 from flask_login import current_user
 from app.models import Room,User
+from app.game.mainGame import MainGame
+from app.game.playerGame import PlayerGame
 from app.models import db
 import os
 
@@ -63,4 +65,13 @@ def disconnect(*arg):
 
 @sio.on('start_game')
 def startGame(data):
-    print('---------starting game',data.get('players'))
+    players = data['players']
+    playerGames = []
+    for player in players:
+        user = User.query.get(player['id'])
+        game = PlayerGame(user)
+        playerGames.append(game)
+
+    newGame = MainGame(playerGames)
+
+    emit('game_started',{'game':newGame.gameStatus()})

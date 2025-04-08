@@ -22,6 +22,13 @@ class PlayerGame:
     def playerHealth(self,value):
         self.playerHealth = self.playerHealth + value
 
+    def gameStatus(self):
+        return {
+            'player':self.player.to_dict(),
+            'scores':self.scores,
+            'health':self.playerHealth,
+            'monsters':self.level.monsters
+        }
     def isEnded(self):
         if self.playerHealth == 0:
             self.status = 'ended'

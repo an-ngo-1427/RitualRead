@@ -1,15 +1,20 @@
 import {useEffect, useRef} from "react"
-function GameCanvas(monsters) {
+import './gameCanvas.css'
+function GameCanvas(monsters,sio,game) {
+    console.log('in canvas page')
     const canvasRef = useRef(null)
     useEffect(()=>{
         const canvas = canvasRef.current
         const context = canvas.getContext('2d')
         context.fillText()
-    })
+    },[])
     return (
         <div>
-            <canvas classname="game_canvas"  ref='canvasRef' width= '400px' height='300px'>
+            <canvas className="game_canvas"  ref={canvasRef}>
+
             </canvas>
         </div>
     )
 }
+
+export default GameCanvas

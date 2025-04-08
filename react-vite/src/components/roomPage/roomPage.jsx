@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams,useBlocker} from "react-router-dom"
-
+import GameCanvas from "../gamePage/gameCanvas"
 import { io } from 'socket.io-client'
 
 let socket
@@ -9,7 +9,8 @@ function RoomPage() {
     const { roomId } = useParams();
     const navigate = useNavigate();
     const [showExitDialog, setShowExitDialog] = useState(false);
-
+    const [sio, setSio] = useState(null);
+    const [gameStarted, setGameStarted] = useState(false);
     // useEffect to connect to the socket server
 
     // useEffect to connect socket
@@ -17,6 +18,7 @@ function RoomPage() {
         socket = io()
         socket.on('connect', (message) => {
             console.log('conntecting to server...:', message);
+            setSio(socket);
         });
         socket.on("connect_error", (err) => {
             console.log(`connect_error due to ${err.message}`);
@@ -26,7 +28,9 @@ function RoomPage() {
             setRoomData(data.room);
         });
         socket.on('leave_room', (data) => {
+            setSio(null);
             setRoomData(data.room);
+
         });
 
         return () => {
@@ -103,35 +107,48 @@ function RoomPage() {
 
     }
     return (
-        <div className="room-container">
-            <h1>Room Page</h1>
-            {roomData ? (
-                <div>
-                    <h2>{roomData.name}</h2>
-                    <div>
-                        {roomData.members.map((member) => <div key={member.id}>{member.username}</div>)}
-                    </div>
-                </div>
-            ) : (
-                <p>Loading room data...</p>
-            )}
-            <button
-                className="exit-room-btn"
-                onClick={() => setShowExitDialog(true)}
-            >
-                Exit room
-            </button>
-            {showExitDialog && (
-                <div className="exit-dialog">
-                    <p>Are you sure you want to exit the room?</p>
-                    <button onClick={handleExitRoom}>Yes</button>
-                    <button onClick={() => {
-                        setShowExitDialog(false)
-                        history.pushState(null, "", window.location.href);
-                    }}
-                    >No</button>
-                </div>
-            )}
+        <div>
+            {gameStarted? (<GameCanvas/>) :
+               ( <div className="room-container">
+                    <h1>Room Page</h1>
+                    {roomData ? (
+                        <div>
+                            <h2>{roomData.name}</h2>
+                            <div>
+                                {roomData.members.map((member) => <div key={member.id}>{member.username}</div>)}
+                            </div>
+                        </div>
+                    ) : (
+                        <p>Loading room data...</p>
+                    )}
+                    <button
+                        className="exit-room-btn"
+                        onClick={() => setShowExitDialog(true)}
+                    >
+                        Exit room
+                    </button>
+                    <button
+                        className="start-game-btn"
+                        onClick={() => {
+                            setGameStarted(true);
+                            socket.emit('start_game',{'players':roomData.members});
+                        }}
+                    >
+                        Start Game
+                    </button>
+                    {showExitDialog && (
+                        <div className="exit-dialog">
+                            <p>Are you sure you want to exit the room?</p>
+                            <button onClick={handleExitRoom}>Yes</button>
+                            <button onClick={() => {
+                                setShowExitDialog(false)
+                                history.pushState(null, "", window.location.href);
+                            }}
+                            >No</button>
+                        </div>
+                    )}
+                </div>)
+            }
         </div>
     );
 }

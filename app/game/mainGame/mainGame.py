@@ -1,7 +1,6 @@
 class MainGame:
-    def __init__(self,players,*playerGames):
+    def __init__(self,playerGames):
         self.status = 'started'
-        self.players = players
         self.playerGames = playerGames
 
     def isEnded(self):
@@ -11,3 +10,15 @@ class MainGame:
                 return False
         self.status = 'ended'
         return True
+
+    def getPlayers(self):
+        players = []
+        for playerGame in self.playerGames:
+            players.append(playerGame.player)
+        return [player.to_dict() for player in players]
+
+    def gameStatus(self):
+        return {
+            'status':self.status,
+            'player games':[playerGame.gameStatus() for playerGame in self.playerGames],
+        }

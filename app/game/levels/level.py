@@ -6,7 +6,7 @@ class Level:
         # each level has +1 monster amount from previous level
         #
         self.levelDifficulty = 1
-        self.monsters = []
+        self.monsters = [Monster(cps=5, monsterDifficulty=self.levelDifficulty, isHeal = False, isDoublePoints= False)]
         self.passed = False
 
     # addvancing level by adding a monter to monsters array based on the difficulty level
@@ -20,5 +20,5 @@ class Level:
 
         self.monsters.append(newMonster)
 
-    def returnMonsters(self):
+    def monsters(self):
         return self.monsters
