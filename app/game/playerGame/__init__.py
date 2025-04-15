@@ -1,1 +1,1 @@
-from playerGame import PlayerGame
+from .playerGame import PlayerGame

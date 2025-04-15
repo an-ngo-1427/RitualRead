@@ -1,4 +1,4 @@
-from levels import Level
+from app.game.levels import Level
 class PlayerGame:
     def __init__(self,player):
         self.level = Level()

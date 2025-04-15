@@ -1,4 +1,4 @@
-from monsters import Monster
+from app.game.monsters import Monster
 import random
 class Level:
     def __init__(self):

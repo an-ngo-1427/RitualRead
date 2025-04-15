@@ -15,6 +15,7 @@ function RoomPage() {
 
     // useEffect to connect socket
     useEffect(() => {
+        console.log('reconnecting')
         socket = io()
         socket.on('connect', (message) => {
             console.log('conntecting to server...:', message);
