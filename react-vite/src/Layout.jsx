@@ -1,10 +1,11 @@
 import { Outlet, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import './Layout.css';
+import useUser from './contexts/userContext';
 
 function Layout() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState(null);
+  const {user,setUser} = useUser();
   useEffect(() => {
     // Check if user is logged in
     // This is a placeholder - implement actual auth check
@@ -35,6 +36,7 @@ function Layout() {
               className="auth-button"
               onClick={async () => {
                 await fetch('/api/auth/logout', { method: 'GET' });
+                setUser(null);
                 setIsLoggedIn(false);
               }}
             >

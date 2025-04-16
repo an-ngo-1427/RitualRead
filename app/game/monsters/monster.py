@@ -17,3 +17,14 @@ class Monster:
 
     def terminateMonster(self):
         self.status = 'terminated'
+
+    def to_dict(self):
+        return {
+            'monsterDifficulty':self.monsterDifficulty,
+            'string':self.ranString,
+            'timer':self.timer,
+            'points':self.points,
+            'isHeal':self.isHeal,
+            'isDoublePoints':self.isDoublePoints,
+            'status':self.status
+        }

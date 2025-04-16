@@ -22,3 +22,8 @@ class Level:
 
     def monsters(self):
         return self.monsters
+    def to_dict(self):
+        return {
+            'levelDifficulty':self.levelDifficulty,
+            'monsters':[monster.to_dict() for monster in self.monsters]
+        }

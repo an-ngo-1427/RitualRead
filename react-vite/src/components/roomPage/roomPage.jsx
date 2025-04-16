@@ -11,6 +11,7 @@ function RoomPage() {
     const [showExitDialog, setShowExitDialog] = useState(false);
     const [sio, setSio] = useState(null);
     const [gameStarted, setGameStarted] = useState(false);
+    const [game, setGame] = useState(null);
     // useEffect to connect to the socket server
 
     // useEffect to connect socket
@@ -33,6 +34,11 @@ function RoomPage() {
             setRoomData(data.room);
 
         });
+
+        socket.on('game_started', (data) => {
+            setGame(data.game);
+            setGameStarted(true);
+        })
 
         return () => {
             socket.disconnect();
@@ -109,7 +115,7 @@ function RoomPage() {
     }
     return (
         <div>
-            {gameStarted? (<GameCanvas/>) :
+            {gameStarted? (<GameCanvas game={game}/>) :
                ( <div className="room-container">
                     <h1>Room Page</h1>
                     {roomData ? (

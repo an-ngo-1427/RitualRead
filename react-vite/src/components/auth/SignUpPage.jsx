@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import useUser from '../../contexts/userContext';
 
 const SignUpPage = () => {
     const [formData, setFormData] = useState({
@@ -9,6 +10,7 @@ const SignUpPage = () => {
         password: '',
         username: '',
     });
+    const {setUser} = useUser()
     const navigate = useNavigate();
     const [formErrors, setFormErrors] = useState([]);
     const handleChange = (e) => {
@@ -33,6 +35,7 @@ const SignUpPage = () => {
         const data = await res.json();
         if (res.ok) {
             // Redirect to lobby
+            setUser(data.user);
             navigate('/lobby');
         } else {
             // Handle form errors

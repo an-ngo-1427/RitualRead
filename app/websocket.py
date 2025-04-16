@@ -74,4 +74,3 @@ def startGame(data):
 
     newGame = MainGame(playerGames)
     emit('game_started',{'game':newGame.gameStatus()})
-

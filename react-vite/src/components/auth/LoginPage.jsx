@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import './LoginPage.css';
+import useUser from '../../contexts/userContext';
 
 function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-
+  const {setUser} = useUser()
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -21,10 +22,11 @@ function LoginPage() {
       body: JSON.stringify({ email, password }),
     })
 
+    const data = await response.json()
     if (response.ok){
+      setUser(data.user)
       navigate('/lobby')
     }else{
-      const data = await response.json()
       setErrors(data.errors)
       setIsLoading(false)
     }
