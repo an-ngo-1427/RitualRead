@@ -20,5 +20,5 @@ class MainGame:
     def gameStatus(self):
         return {
             'status':self.status,
-            'player games':[playerGame.gameStatus() for playerGame in self.playerGames],
+            'player_games':[playerGame.gameStatus() for playerGame in self.playerGames],
         }

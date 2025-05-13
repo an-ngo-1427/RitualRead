@@ -36,6 +36,7 @@ function RoomPage() {
         });
 
         socket.on('game_started', (data) => {
+            console.log('game started:', data);
             setGame(data.game);
             setGameStarted(true);
         })
@@ -115,7 +116,7 @@ function RoomPage() {
     }
     return (
         <div>
-            {gameStarted? (<GameCanvas game={game}/>) :
+            {(gameStarted && game) ? (<GameCanvas game={game}/>) :
                ( <div className="room-container">
                     <h1>Room Page</h1>
                     {roomData ? (

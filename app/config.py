@@ -5,5 +5,5 @@ class Config:
     FLASK_RUN_PORT = os.environ.get('FLASK_RUN_PORT')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_DATABASE_URI = os.environ.get(
-        'DATABASE_URL').replace('prosgres://','postgresql://')
+        'DATABASE_URL').replace('prostgres://','postgresql://')
     SQLALCHEMY_ECHO = True
